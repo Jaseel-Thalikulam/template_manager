@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,11 +24,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+  let pathLinks = [{
+    name:"Assign Concern",
+    link: "assign-concern" 
+  }]
+
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="h-16 w-full bg-red-700">
+          {pathLinks.map((path, index) => (
+            <Link href={path.link}>
+              <button key={index}>{path.name}</button>
+            </Link>
+          ))}
+        </div>
         {children}
       </body>
     </html>

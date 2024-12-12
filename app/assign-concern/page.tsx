@@ -2,29 +2,46 @@
 import { useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default function Home() {
-  const [recipientName, setRecipientName] = useState("");
+
+export default function AssignConcern() {
+  const [concern, setConcern] = useState("");
   const [name, setName] = useState("");
+  const [domain, setDomain] = useState("");
   const [week, setWeek] = useState("");
-  const [date, setDate] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [recordingLink, setRecordingLink] = useState("");
   const [generatedTemplate, setGeneratedTemplate] = useState("");
   const [error, setError] = useState("");
 
-  const recipientRef = useRef<HTMLInputElement | null>(null);
+  const concernRef = useRef<HTMLTextAreaElement | null>(null);
   const nameRef = useRef<HTMLInputElement | null>(null);
+  const domainRef = useRef<HTMLInputElement | null>(null);
   const weekRef = useRef<HTMLInputElement | null>(null);
-  const dateRef = useRef<HTMLInputElement | null>(null);
+  const contactRef = useRef<HTMLInputElement | null>(null);
+  const recordingRef = useRef<HTMLInputElement | null>(null);
 
   const handleGenerateTemplate = () => {
-    if (recipientName.trim() && name.trim() && week.trim() && date.trim()) {
-      setGeneratedTemplate(`
-    *${name}*
-    *${week}* 
-    *${date}* 
+    if (
+      concern.trim() &&
+      name.trim() &&
+      domain.trim() &&
+      week.trim() &&
+      contactNumber.trim() &&
+      recordingLink.trim()
+    ) {
+        setGeneratedTemplate(`
+*Name:* ${name}
+*Domain:* ${domain}
+*Week:* ${week}
+*Contact Number:* ${contactNumber}
+*Recording Link:* ${recordingLink}
 
-    Hi ${recipientName},  
-    Please provide the *Review recording* for the above details.  
-    Thank you!`);
+*Concern:*
+         ${concern}
+
+
+Please review and address this concern at the earliest. Thank you!
+      `);
       setError(""); // Clear error
     } else {
       setError("Please fill in all fields.");
@@ -34,42 +51,37 @@ export default function Home() {
   const handleCopyToClipboard = () => {
     if (generatedTemplate) {
       navigator.clipboard.writeText(generatedTemplate);
-      toast("Wow so easy!");
-      // alert("Template copied to clipboard!");
+      toast("Template copied to clipboard!");
     }
   };
 
   const handlePaste = (
-    e: React.ClipboardEvent<HTMLInputElement>,
-    nextRef: React.RefObject<HTMLInputElement | null>,
-    fieldSetter: React.Dispatch<React.SetStateAction<string>> // Accept the setter function for the field
+    e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+    nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
+    fieldSetter: React.Dispatch<React.SetStateAction<string>>
   ) => {
-    e.preventDefault(); // Prevent the default paste behavior
+    e.preventDefault();
     const pastedText = e.clipboardData.getData("text");
-
-    fieldSetter(pastedText); // Update only the specific field's state
-
-    // Use setTimeout to move focus after the paste action is complete
+    fieldSetter(pastedText);
     setTimeout(() => {
       if (nextRef?.current) {
-        nextRef.current.focus(); // Move focus to the next field
+        nextRef.current.focus();
       }
-    }, 100); // Delay to ensure the input value is updated first
+    }, 100);
   };
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div>
-          <input
-            ref={recipientRef}
-            type="text"
-            placeholder="Enter Recipient Name"
-            value={recipientName}
-            onChange={(e) => setRecipientName(e.target.value)}
-            onPaste={(e) => handlePaste(e, nameRef, setRecipientName)}
-            className="p-2 border border-gray-300 rounded"
-          />
+          <textarea
+            ref={concernRef}
+            placeholder="Enter Concern"
+            value={concern}
+            onChange={(e) => setConcern(e.target.value)}
+            onPaste={(e) => handlePaste(e, nameRef, setConcern)}
+            className="p-2 border border-gray-300 rounded w-full h-24"
+          ></textarea>
         </div>
         <div>
           <input
@@ -78,7 +90,18 @@ export default function Home() {
             placeholder="Enter Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            onPaste={(e) => handlePaste(e, weekRef, setName)}
+            onPaste={(e) => handlePaste(e, domainRef, setName)}
+            className="p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <input
+            ref={domainRef}
+            type="text"
+            placeholder="Enter Domain"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            onPaste={(e) => handlePaste(e, weekRef, setDomain)}
             className="p-2 border border-gray-300 rounded"
           />
         </div>
@@ -89,17 +112,28 @@ export default function Home() {
             placeholder="Enter Week"
             value={week}
             onChange={(e) => setWeek(e.target.value)}
-            onPaste={(e) => handlePaste(e, dateRef, setWeek)}
+            onPaste={(e) => handlePaste(e, contactRef, setWeek)}
             className="p-2 border border-gray-300 rounded"
           />
         </div>
         <div>
           <input
-            ref={dateRef}
+            ref={contactRef}
             type="text"
-            placeholder="Enter Date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            placeholder="Enter Contact Number"
+            value={contactNumber}
+            onChange={(e) => setContactNumber(e.target.value)}
+            onPaste={(e) => handlePaste(e, recordingRef, setContactNumber)}
+            className="p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <input
+            ref={recordingRef}
+            type="text"
+            placeholder="Enter Recording Link"
+            value={recordingLink}
+            onChange={(e) => setRecordingLink(e.target.value)}
             className="p-2 border border-gray-300 rounded"
           />
         </div>
