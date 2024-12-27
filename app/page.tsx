@@ -117,7 +117,7 @@ export default function Home() {
             <pre>{generatedTemplate}</pre>
             <button
               onClick={handleCopyToClipboard}
-              className="mt-2 px-4 py-2 bg-green-500 text-white rounded"
+              className="mt-2 px-4 py-2 bg-green-500 text-white rounded bg-violet-700"
             >
               Copy to Clipboard
             </button>

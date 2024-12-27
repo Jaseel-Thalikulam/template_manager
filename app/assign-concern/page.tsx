@@ -8,8 +8,9 @@ export default function AssignConcern() {
   const [name, setName] = useState("");
   const [domain, setDomain] = useState("");
   const [week, setWeek] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
+
   const [recordingLink, setRecordingLink] = useState("");
+  const [manifest, setManifest] = useState("");
   const [generatedTemplate, setGeneratedTemplate] = useState("");
   const [error, setError] = useState("");
 
@@ -17,23 +18,24 @@ export default function AssignConcern() {
   const nameRef = useRef<HTMLInputElement | null>(null);
   const domainRef = useRef<HTMLInputElement | null>(null);
   const weekRef = useRef<HTMLInputElement | null>(null);
-  const contactRef = useRef<HTMLInputElement | null>(null);
+
+  const manifestRef = useRef<HTMLInputElement | null>(null);
   const recordingRef = useRef<HTMLInputElement | null>(null);
 
-  const handleGenerateTemplate = () => {
+  const handleGenerateAndCopy = () => {
     if (
       concern.trim() &&
       name.trim() &&
       domain.trim() &&
       week.trim() &&
-      contactNumber.trim() &&
+      manifest.trim() &&
       recordingLink.trim()
     ) {
-        setGeneratedTemplate(`
+      const template = `
 *Name:* ${name}
 *Domain:* ${domain}
 *Week:* ${week}
-*Contact Number:* ${contactNumber}
+*Manifest:* ${manifest}
 *Recording Link:* ${recordingLink}
 
 *Concern:*
@@ -41,17 +43,13 @@ export default function AssignConcern() {
 
 
 Please review and address this concern at the earliest. Thank you!
-      `);
-      setError(""); // Clear error
+      `;
+      setGeneratedTemplate(template);
+      navigator.clipboard.writeText(template);
+      toast("Template generated and copied to clipboard!");
+      setError("");
     } else {
       setError("Please fill in all fields.");
-    }
-  };
-
-  const handleCopyToClipboard = () => {
-    if (generatedTemplate) {
-      navigator.clipboard.writeText(generatedTemplate);
-      toast("Template copied to clipboard!");
     }
   };
 
@@ -112,18 +110,18 @@ Please review and address this concern at the earliest. Thank you!
             placeholder="Enter Week"
             value={week}
             onChange={(e) => setWeek(e.target.value)}
-            onPaste={(e) => handlePaste(e, contactRef, setWeek)}
+            onPaste={(e) => handlePaste(e, manifestRef, setWeek)}
             className="p-2 border border-gray-300 rounded"
           />
         </div>
         <div>
           <input
-            ref={contactRef}
+            ref={manifestRef}
             type="text"
-            placeholder="Enter Contact Number"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
-            onPaste={(e) => handlePaste(e, recordingRef, setContactNumber)}
+            placeholder="Enter Manifest"
+            value={manifest}
+            onChange={(e) => setManifest(e.target.value)}
+            onPaste={(e) => handlePaste(e, recordingRef, setManifest)}
             className="p-2 border border-gray-300 rounded"
           />
         </div>
@@ -139,22 +137,16 @@ Please review and address this concern at the earliest. Thank you!
         </div>
         <div>
           <button
-            onClick={handleGenerateTemplate}
+            onClick={handleGenerateAndCopy}
             className="px-4 py-2 bg-blue-500 text-white rounded"
           >
-            Generate Template
+            Generate and Copy
           </button>
         </div>
         {error && <p className="text-red-500">{error}</p>}
         {generatedTemplate && (
           <div className="mt-8 p-4 bg-gray-100 border border-gray-300 rounded">
             <pre>{generatedTemplate}</pre>
-            <button
-              onClick={handleCopyToClipboard}
-              className="mt-2 px-4 py-2 bg-green-500 text-white rounded"
-            >
-              Copy to Clipboard
-            </button>
           </div>
         )}
       </main>
